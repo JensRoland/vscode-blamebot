@@ -1,0 +1,104 @@
+{
+  "name": "vscode-blamebot",
+  "displayName": "Blamebot",
+  "description": "Track provenance of AI-authored code — see the prompt and reasoning behind every AI edit",
+  "version": "0.1.0",
+  "publisher": "jensroland",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JensRoland/vscode-blamebot"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "blamebot.refresh",
+        "title": "Blamebot: Refresh"
+      },
+      {
+        "command": "blamebot.toggleAnnotations",
+        "title": "Blamebot: Toggle Annotations"
+      },
+      {
+        "command": "blamebot.showTrace",
+        "title": "Blamebot: Show Reasoning Trace"
+      }
+    ],
+    "configuration": {
+      "title": "Blamebot",
+      "properties": {
+        "blamebot.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable Blamebot annotations"
+        },
+        "blamebot.gutterIcons": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show gutter icons on AI-edited lines"
+        },
+        "blamebot.inlineAnnotations": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show inline reason text on the current line"
+        },
+        "blamebot.codeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show CodeLens above AI-edited functions"
+        },
+        "blamebot.cliPath": {
+          "type": "string",
+          "default": "git",
+          "description": "Path to the git executable (blamebot is a git subcommand)"
+        }
+      }
+    },
+    "colors": [
+      {
+        "id": "blamebot.exactMatchRuler",
+        "description": "Overview ruler color for lines with exact AI match",
+        "defaults": {
+          "dark": "#4EC9B0",
+          "light": "#16825D",
+          "highContrast": "#4EC9B0"
+        }
+      },
+      {
+        "id": "blamebot.changedMatchRuler",
+        "description": "Overview ruler color for lines with changed AI match",
+        "defaults": {
+          "dark": "#D4A04A",
+          "light": "#BF8803",
+          "highContrast": "#D4A04A"
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && node esbuild.js",
+    "package": "npm run check-types && node esbuild.js --production",
+    "check-types": "tsc --noEmit",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --preserveWatchOutput"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.24.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.3.0"
+  }
+}
