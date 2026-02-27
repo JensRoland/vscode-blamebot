@@ -32,6 +32,10 @@
       {
         "command": "blamebot.showTrace",
         "title": "Blamebot: Show Reasoning Trace"
+      },
+      {
+        "command": "blamebot.showExplain",
+        "title": "Blamebot: Explain Code"
       }
     ],
     "configuration": {

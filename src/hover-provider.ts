@@ -44,12 +44,27 @@ export class BlamebotHoverProvider implements vscode.HoverProvider {
     md.appendMarkdown(` &nbsp;|&nbsp; **Tool:** ${record.tool}`);
     md.appendMarkdown(` &nbsp;|&nbsp; **When:** ${date}\n\n`);
 
+    const links: string[] = [];
+
     if (record.trace) {
       const traceArg = encodeURIComponent(JSON.stringify(record.trace));
-      md.appendMarkdown(
+      links.push(
         `[$(eye) View Full Trace](command:blamebot.showTrace?${traceArg})`
       );
     }
+
+    const explainArg = encodeURIComponent(
+      JSON.stringify({
+        filePath: document.uri.fsPath,
+        startLine: record.lines[0],
+        endLine: record.lines[1],
+      })
+    );
+    links.push(
+      `[$(lightbulb) Explain](command:blamebot.showExplain?${explainArg})`
+    );
+
+    md.appendMarkdown(links.join(" &nbsp;|&nbsp; "));
 
     return new vscode.Hover(md);
   }

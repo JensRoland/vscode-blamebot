@@ -53,6 +53,30 @@ export class BlamebotClient {
     }
   }
 
+  async queryExplain(
+    filePath: string,
+    startLine: number,
+    endLine: number
+  ): Promise<string> {
+    const cwd = this.getWorkspaceRoot(filePath);
+    if (!cwd) {
+      return "No workspace folder open.";
+    }
+
+    const relativePath = path.relative(cwd, filePath);
+    const cli = this.getCliPath();
+
+    try {
+      return await this.exec(
+        cli,
+        ["blamebot", "--explain", relativePath, "-L", `${startLine},${endLine}`],
+        cwd
+      );
+    } catch {
+      return `Failed to retrieve explanation for ${relativePath} lines ${startLine}-${endLine}.`;
+    }
+  }
+
   private exec(
     command: string,
     args: string[],
