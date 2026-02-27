@@ -9,6 +9,7 @@ import {
   TRACE_SCHEME,
   registerTraceCommand,
 } from "./trace-viewer";
+import { registerExplainCommand } from "./explain-viewer";
 
 export function activate(context: vscode.ExtensionContext): void {
   const client = new BlamebotClient();
@@ -44,6 +45,9 @@ export function activate(context: vscode.ExtensionContext): void {
     )
   );
   registerTraceCommand(context);
+
+  // --- Explain Viewer ---
+  registerExplainCommand(context, client);
 
   // --- Commands ---
   context.subscriptions.push(
