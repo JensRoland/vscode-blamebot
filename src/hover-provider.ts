@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { BlamebotCache } from "./cache";
+import { effectiveLines } from "./lineset";
 
 export class BlamebotHoverProvider implements vscode.HoverProvider {
   constructor(private cache: BlamebotCache) {}
@@ -53,11 +54,14 @@ export class BlamebotHoverProvider implements vscode.HoverProvider {
       );
     }
 
+    const lines = effectiveLines(record);
+    const startLine = lines.length > 0 ? lines[0] : record.lines[0];
+    const endLine = lines.length > 0 ? lines[lines.length - 1] : record.lines[1];
     const explainArg = encodeURIComponent(
       JSON.stringify({
         filePath: document.uri.fsPath,
-        startLine: record.lines[0],
-        endLine: record.lines[1],
+        startLine,
+        endLine,
       })
     );
     links.push(

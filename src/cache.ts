@@ -1,4 +1,5 @@
 import { BlamebotRecord } from "./types";
+import { effectiveLines } from "./lineset";
 
 export class BlamebotCache {
   private cache = new Map<string, BlamebotRecord[]>();
@@ -40,11 +41,10 @@ export class BlamebotCache {
     );
 
     for (const record of sorted) {
-      const [start, end] = record.lines;
-      if (start == null || end == null) {
+      if (record.superseded) {
         continue;
       }
-      for (let line = start; line <= end; line++) {
+      for (const line of effectiveLines(record)) {
         index.set(line, record);
       }
     }

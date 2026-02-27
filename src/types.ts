@@ -1,6 +1,8 @@
 export interface BlamebotRecord {
   file: string;
-  lines: [number, number]; // [start, end], 1-indexed
+  lines: [number | null, number | null]; // [start, end], 1-indexed (legacy)
+  current_lines?: string; // compact notation e.g. "5,7-8,12" (adjusted positions)
+  superseded?: boolean; // true if content was overwritten by later edits
   ts: string; // ISO 8601
   prompt: string;
   reason: string;
