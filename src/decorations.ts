@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { BlamebotCache } from "./cache";
 import { BlamebotClient } from "./blamebot-client";
 import { BlamebotRecord } from "./types";
+import { effectiveLines } from "./lineset";
 
 export class DecorationManager {
   private exactDecoration: vscode.TextEditorDecorationType;
@@ -121,20 +122,18 @@ export class DecorationManager {
 
     if (showGutter) {
       for (const record of records) {
-        const [start, end] = record.lines;
-        if (start == null || end == null) {
+        if (record.superseded) {
           continue;
         }
-        const range = new vscode.Range(
-          start - 1, 0,
-          end - 1, 0
-        );
-        const options: vscode.DecorationOptions = { range };
-
-        if (record.match === "exact") {
-          exactRanges.push(options);
-        } else {
-          changedRanges.push(options);
+        const lines = effectiveLines(record);
+        if (lines.length === 0) {
+          continue;
+        }
+        const target = record.match === "exact" ? exactRanges : changedRanges;
+        for (const line of lines) {
+          target.push({
+            range: new vscode.Range(line - 1, 0, line - 1, 0),
+          });
         }
       }
     }

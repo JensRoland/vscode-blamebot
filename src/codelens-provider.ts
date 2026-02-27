@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { BlamebotCache } from "./cache";
 import { BlamebotRecord } from "./types";
+import { effectiveLines } from "./lineset";
 
 export class BlamebotCodeLensProvider implements vscode.CodeLensProvider {
   private _onDidChange = new vscode.EventEmitter<void>();
@@ -49,11 +50,21 @@ export class BlamebotCodeLensProvider implements vscode.CodeLensProvider {
         continue;
       }
 
-      const overlapping = records.filter(
-        (r) =>
-          r.lines[0] - 1 <= symbol.range.end.line &&
-          r.lines[1] - 1 >= symbol.range.start.line
-      );
+      const overlapping = records.filter((r) => {
+        if (r.superseded) {
+          return false;
+        }
+        const lines = effectiveLines(r);
+        if (lines.length === 0) {
+          return false;
+        }
+        const min = lines[0];
+        const max = lines[lines.length - 1];
+        return (
+          min - 1 <= symbol.range.end.line &&
+          max - 1 >= symbol.range.start.line
+        );
+      });
       if (overlapping.length === 0) {
         continue;
       }
